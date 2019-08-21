@@ -39,10 +39,8 @@ exports.create = (req, res) => {
         titre: req.body.titre , 
         description: req.body.description,
         date: req.body.date,
-        horaire: req.body.horaire,
-        duree:  req.body.duree,
-        place_dispo: req.body.place_dispo,
-        place_reserve: req.body.place_reserve,
+        genre: req.body.genre,
+        artiste: req.body.artiste,
         prix: req.body.prix,
         photo_produit:'' + nomImage +'.jpg'
     });
@@ -103,10 +101,8 @@ exports.modifier = (req, res) => {
         titre: req.body.titre , 
         description: req.body.description,
         date: req.body.date,
-        horaire: req.body.horaire,
-        duree:  req.body.duree,
-        place_dispo: req.body.place_dispo,
-        place_reserve: req.body.place_reserve,
+        genre: req.body.genre,
+        artiste: req.body.artiste,
         prix: req.body.prix,
         photo_produit:'' + nomImage +'.jpg'
         
@@ -154,10 +150,9 @@ exports.particulier = (req, res) => {
                     titre: use.titre,
                     description: use.description,
                     date: use.date,
-                    horaire: use.horaire,
+                    genre: use.genre,
+                    artiste: use.artiste,
                     duree:use.duree,
-                    place_reserve: use.place_reserve+1,
-                    place_dispo: use.place_dispo-1,
                     prix:use.prix,
                     image:use.image,
 
@@ -210,12 +205,11 @@ Produit.findOneAndUpdate({_id: req.params._id}, {
     titre: req.body.titre, 
     prix: req.body.prix, 
     description: req.body.description, 
-    horaire: req.body.horaire,
     date: req.body.date,
+    genre: req.body.genre,
+    artiste: req.body.artiste,
     photo_produit: ''+nomImage + '.jpg', 
-    duree: req.body.duree, 
-    place_dispo: req.body.place_dispo, 
-    place_reserve: req.body.place_reserve,
+    
 }, { new: true }).then(user => { 
 if (!user) { 
     return res.status(404).send(

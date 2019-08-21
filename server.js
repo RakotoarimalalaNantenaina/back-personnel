@@ -17,48 +17,19 @@ app.use('/public', express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// // ... other app.use middleware 
-// app.use(express.static(path.join(__dirname, "client", "build")))
-
-// // ...
-// // Right before your app.listen(), add this:
-// app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-// });
-
-
 const users = require("./routes/api/users");
 
 // // DB Config
 const db = require("./config/keys").mongoURI;
 
-// // Connect to MongoDB
+// // Connection au  MongoDB
 mongoose
   .connect(
     db,
     { useNewUrlParser: true }
   )
-  .then(() => console.log("Connexion avec succes"))
-  .catch(err => console.log(err));
-
-// // ... other app.use middleware 
-// app.use(express.static(path.join(__dirname, "client", "build")))
-
-// // ...
-// // Right before your app.listen(), add this:
-// app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-// });
-
-// mongoose.Promise = global.Promise;
-// mongoose.connect(db.url, {
-//     useNewUrlParser: true
-// }).then(() => {
-//     console.log("Successfully connected to the database");
-// }).catch(err => {
-//     console.log('Could not connect to the database. Exiting now...', err);
-//     process.exit();
-// });
+  .then(() => console.log("Connexion de la base de donnée avec succes"))
+  .catch(err => console.log(err, "Erreur de la connexion de la base de donnée"));
 
 // Passport middleware
 app.use(passport.initialize());
@@ -73,5 +44,5 @@ app.use("/api/users", users);
 
 const port = process.env.PORT || 8080;
 
-app.listen(port, () => console.log(`Server demarer ${port} !`));
+app.listen(port, () => console.log(`Serveur demarer sur le port ${port} !`));
 
