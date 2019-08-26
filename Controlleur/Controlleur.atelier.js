@@ -184,6 +184,12 @@ exports.getaetelier = (req,res)=>{
     )
 }
 
+exports.supprimer = (req,res)=>{
+    Produit.findByIdAndRemove({_id: req.params._id}, function(err, business){
+        if(err) res.json(err);
+        else res.json('Suppression avec succes');
+    });
+}
 
 exports.modifatelier = (req,res)=>{
     console.log('ity ny requete'+req.body.nom) 
