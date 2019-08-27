@@ -190,7 +190,12 @@ exports.supprimer = (req,res)=>{
         else res.json('Suppression avec succes');
     });
 }
-
+exports.getid = (req,res)=>{
+    let id = req.params.id;
+    Produit.findById(id, function(err, todo) {
+        res.json(todo);
+    });
+}
 exports.modifatelier = (req,res)=>{
     console.log('ity ny requete'+req.body.nom) 
 
