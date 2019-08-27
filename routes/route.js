@@ -9,6 +9,7 @@ module.exports = (app) => {
     app.get('/masqueratelier/:_id', produit.masqueratelier);
     app.put('/afficheatelier/:_id', produit.modifatelier);
     app.get('/supprimer/:_id', produit.supprimer);
+    app.get('/:id',produit.getid);
 
     app.get('/atelier/:image', produit.lireImage);
     app.put('/atelier/:profilId', produit.modifier);
