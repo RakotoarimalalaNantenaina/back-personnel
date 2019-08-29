@@ -1,6 +1,8 @@
 const Produit = require('../models/model.atelier');
 const Particulier = require('../models/model.particulier');
 const fs = require('fs');
+const Admin = require('../models/model.admin')
+const User = require('../models/User')
 
 //Create new profil
 exports.create = (req, res) => {
@@ -123,8 +125,70 @@ exports.modifier = (req, res) => {
         return res.status(500).send({
             message: "Erreur 500 " + req.params.profilId
         });
-    });
+    });Produit
 };
+
+// Admin site
+exports.admin = (req,res)=>{
+    Admin.find()
+    .then(users => {    
+        var tab1 = []
+        for(let i =0; i<users.length; i++) {
+            tab1.push(users[i])
+        }
+        res.send(tab1);
+
+        
+    }).catch(err => {
+        console.log(err);
+        
+        res.status(500).send({
+            message: err.message || "Something wrong while retrieving profils."
+        });
+    });
+}
+
+// Post admin
+
+exports.postadmin = (req, res) => {
+    if(!req.body.username) {
+        return res.status(400).send({
+            message: "profil content can not be empty"
+            
+        });
+    }
+    Admin.find()
+    .then(user => {
+        let id;
+        if(user.length == 0){
+            id = 0
+        }else {
+            id = parseInt(user[user.length - 1]._id) + 1
+        }
+    const produit = new Admin({    
+        _id: id,
+        username: req.body.username,
+        password: req.body.password , 
+    });
+    produit.save()
+    .then(() => {
+        Admin.find()
+        .then(data=>{
+            res.send(data);
+            console.log(data);
+        })
+    }).catch(err => {
+        res.status(500).send({
+            message: err.message || "Something wrong while creating the profil."
+            
+        });
+    });
+})
+};
+
+
+
+
 exports.particulier = (req, res) => {
     Particulier.find().then(use=>{
         var id;
@@ -135,37 +199,48 @@ exports.particulier = (req, res) => {
             id=use[use.length-1]._id+1
         }
         
-
         Produit.findById(req.params._id).then(use=>{
                 const particulier = new Particulier({
                     _id:id,
-                    nom: req.body.nom,
-                    prenom: req.body.prenom,
-                    email: req.body.email,
-                    numtel:req.body.numtel,
-
-                });
-            Produit.findByIdAndUpdate(use._id, { _id:use.id,
-                    id2:use.id2,
+                    id_utilisateur: use.id_user,
+                    id_panier: use._id,
                     titre: use.titre,
                     description: use.description,
-                    date: use.date,
-                    genre: use.genre,
                     artiste: use.artiste,
-                    duree:use.duree,
-                    prix:use.prix,
-                    image:use.image,
-
-                }).then(upd=>console.log(upd)
-                )
-                                particulier
-                                    .save()
-                                    .then(user => {
+                    date:use.date,
+                    genre:use.genre,
+                    prix: use.prix,
+                });
+        particulier.save()
+            .then(user => {
                 res.json(user)
-         }); 
+            }); 
     });
     }); 
     }
+exports.getpanier = (req,res) =>{
+    Particulier.find().then(user=>{
+        const tab=[]
+        for(let i=0;i<user.length;i++){
+            if(user[i].id_utilisateur==req.params._id){
+              tab.push(user[i])
+              console.log(tab);
+
+            }
+
+        }
+        if(tab.length>0){
+            res.send(tab)
+        }
+        else{
+            res.send([])
+         } 
+
+
+    })
+}
+
+
 
 exports.masqueratelier  = (req,res)=>{
     Produit.findOneAndUpdate({ _id: req.params._id }, {
@@ -176,6 +251,7 @@ exports.masqueratelier  = (req,res)=>{
 }
 
 
+
 exports.getaetelier = (req,res)=>{
     Produit.findOneAndUpdate({ _id: req.params._id }, {
         valid: true
@@ -184,23 +260,42 @@ exports.getaetelier = (req,res)=>{
     )
 }
 
+
 exports.supprimer = (req,res)=>{
     Produit.findByIdAndRemove({_id: req.params._id}, function(err, business){
         if(err) res.json(err);
         else res.json('Suppression avec succes');
     });
 }
+
+
 exports.getid = (req,res)=>{
     let id = req.params.id;
     Produit.findById(id, function(err, todo) {
         res.json(todo);
     });
 }
+
+
+
+exports.ajoutpanier = (req,res)=>{
+     User.findById(req.params._id).then((result)=>{
+        let tab1 = []
+        Produit.findOne({_id: req.body._id}).then(prod=>
+            { tab1.push(prod)
+                res.send(tab1)
+            })
+     })
+}
+
+
+
+// Modifier album
 exports.modifatelier = (req,res)=>{
-    console.log('ity ny requete'+req.body.nom) 
+   
 
     let imageFile = req.files.photo_produit; 
-console.log('inona ny ato o!'+imageFile) 
+
 let nomImage = req.params._id
 res.setHeader('Content-Type', 'text/plain');
 imageFile.mv(`${__dirname}/public/${nomImage }.jpg`, function(err) {
@@ -208,10 +303,6 @@ imageFile.mv(`${__dirname}/public/${nomImage }.jpg`, function(err) {
       return res.status(500).send(err);
     }
   });
-console.log(req.params._id);
-
-console.log('tonga eto v nw') 
-// Find and update eleve with the request body 
 Produit.findOneAndUpdate({_id: req.params._id}, { 
     titre: req.body.titre, 
     prix: req.body.prix, 
@@ -243,6 +334,8 @@ return res.status(500).send(
 }
 
 
+
+// Lire image vers controlleur
 exports.lireImage =(req, res) =>{
     try {
         let picture = fs.readFileSync('./Controlleur/public/'+req.params.image)

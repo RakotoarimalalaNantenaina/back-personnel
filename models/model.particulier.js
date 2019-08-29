@@ -5,10 +5,14 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   _id: {type:Number},
   id2: {type: Number},
-  nom: { type: String, required: true},
-  prenom: { type: String, required: true},
-  email: {type: String, required: true},
-  numtel: {type: Number, required: true},
+  id_panier: {type: Number},
+  id_utilisateur : {type: Number},
+  titre: { type: String, required: true},
+  description: { type: String, required: true},
+  artiste: {type: String, required: true},
+  date: {type: String, required: true},
+  genre: {type: String, required: true},
+  prix: {type: Number, required: true},
 });
 
-module.exports = mongoose.model("particulier1", UserSchema);
+module.exports = mongoose.model("panier", UserSchema);
